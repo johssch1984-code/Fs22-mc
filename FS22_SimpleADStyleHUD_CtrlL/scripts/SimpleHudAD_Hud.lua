@@ -15,7 +15,6 @@ local function renderTextLine(x, y, size, text, c, align, bold)
     setTextColor(c[1], c[2], c[3], c[4])
     setTextAlignment(align or RenderText.ALIGN_LEFT)
     setTextBold(bold == true)
-    setTextSize(size)
     renderText(x, y, size, text)
 end
 
