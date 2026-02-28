@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
   <texts>
-    <text name="input_TOGGLE_SIMPLE_HUD" text="Toggle Simple HUD" />
+    <text name="input_TOGGLE_SIMPLE_HUD" text="Toggle Survey HUD" />
   </texts>
 </l10n>

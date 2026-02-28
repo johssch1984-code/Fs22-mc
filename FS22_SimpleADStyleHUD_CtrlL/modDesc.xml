@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="80">
   <author>ChatGPT</author>
-  <version>1.0.1.1</version>
+  <version>1.0.2.2</version>
   <title>Simple AD-Style HUD (CTRL+L)</title>
-  <description>AD-style HUD. Toggle with CTRL+L (action event + raw fallback). Overlay drawing. Uses groundReferenceNode for toolpoint reference; distance to ground plane.</description>
+  <description>Survey/Datum HUD. Locks to bucket toolpoint only while you are inside a vehicle; releases on TAB switch or exit.</description>
 
   <actions>
     <action name="TOGGLE_SIMPLE_HUD" category="GENERAL" />
@@ -21,6 +21,5 @@
   <extraSourceFiles>
     <sourceFile filename="simpleHudAD.lua"/>
     <sourceFile filename="scripts/HudTextUpdater.lua"/>
-    <sourceFile filename="scripts/DistanceToPlane.lua"/>
   </extraSourceFiles>
 </modDesc>
