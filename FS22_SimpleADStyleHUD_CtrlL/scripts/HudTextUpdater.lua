@@ -1,15 +1,11 @@
 -- scripts/HudTextUpdater.lua
--- Lock behavior (requested):
---   - ONLY lock while the player is inside a vehicle (mission.controlledVehicle ~= nil)
---   - If you TAB to another vehicle -> controlledVehicle changes -> release + re-lock for new vehicle
---   - If you exit to on-foot (controlledVehicle == nil) -> release
-
 HudTextUpdater = {}
 
 HudTextUpdater.lockedNode = nil
 HudTextUpdater.lockedOwnerName = nil
 HudTextUpdater.lockedOwnerType = nil
 HudTextUpdater.lastControlledVehicle = nil
+HudTextUpdater.datumY = nil
 
 local function findChild(node, name, depth)
     if node == nil then return nil end
@@ -50,7 +46,6 @@ end
 local function resolveBucketToolpoint(controlledVehicle)
     if controlledVehicle == nil then return nil, nil end
 
-    -- Prefer attached implements first (bucket is usually an implement)
     if controlledVehicle.getAttachedImplements ~= nil then
         for _, impl in ipairs(controlledVehicle:getAttachedImplements()) do
             local t = resolveOnObject(impl.object)
@@ -60,7 +55,6 @@ local function resolveBucketToolpoint(controlledVehicle)
         end
     end
 
-    -- Fallback: controlled vehicle itself (if it *is* the bucket)
     local t = resolveOnObject(controlledVehicle)
     if t ~= nil then
         return t, controlledVehicle
@@ -87,27 +81,36 @@ local function releaseLock(reason)
     HudTextUpdater.lockedOwnerType = nil
 end
 
+function HudTextUpdater.setDatumToCurrent()
+    if HudTextUpdater.lockedNode == nil then
+        print("[SimpleHudAD] Set 0 ignored (no locked toolpoint)")
+        return false
+    end
+    local _, y, _ = getWorldTranslation(HudTextUpdater.lockedNode)
+    HudTextUpdater.datumY = y
+    print(string.format("[SimpleHudAD] Set 0 -> datumY=%.3f", y))
+    return true
+end
+
 function HudTextUpdater.updateText(hud, mission)
     local controlled = (mission ~= nil) and mission.controlledVehicle or nil
 
-    -- Release if player is not in a vehicle
     if controlled == nil then
         if HudTextUpdater.lastControlledVehicle ~= nil then
             releaseLock("exit vehicle")
         end
         HudTextUpdater.lastControlledVehicle = nil
         hud.dynamicText = "E=---  N=---  H=---"
+        hud.cutFillText = "Cut/Fill: ---"
         hud.debugLine = "Lock: none (on foot)"
         return
     end
 
-    -- Release + re-lock if TAB switched to another vehicle
     if HudTextUpdater.lastControlledVehicle ~= nil and controlled ~= HudTextUpdater.lastControlledVehicle then
         releaseLock("TAB switched vehicle")
     end
     HudTextUpdater.lastControlledVehicle = controlled
 
-    -- Acquire lock if missing
     if HudTextUpdater.lockedNode == nil then
         local tp, owner = resolveBucketToolpoint(controlled)
         if tp ~= nil then
@@ -120,11 +123,22 @@ function HudTextUpdater.updateText(hud, mission)
 
     if HudTextUpdater.lockedNode == nil then
         hud.dynamicText = "E=---  N=---  H=---"
+        hud.cutFillText = "Cut/Fill: ---"
         hud.debugLine = "Lock: none (no bucket found)"
         return
     end
 
     local x, y, z = getWorldTranslation(HudTextUpdater.lockedNode)
+
+    local cfTxt = "---"
+    if HudTextUpdater.datumY ~= nil then
+        local cf = y - HudTextUpdater.datumY
+        cfTxt = string.format("%+.3f", cf)
+    end
+
     hud.dynamicText = string.format("E=%.3f  N=%.3f  H=%.3f", x, z, y)
-    hud.debugLine = string.format("Lock: %s (%s)", tostring(HudTextUpdater.lockedOwnerName), tostring(HudTextUpdater.lockedOwnerType))
+    hud.cutFillText = string.format("Cut/Fill: %s", cfTxt)
+
+    local datumTxt = (HudTextUpdater.datumY ~= nil) and string.format("datumY=%.3f", HudTextUpdater.datumY) or "datumY=not set"
+    hud.debugLine = string.format("Lock: %s (%s) | %s", tostring(HudTextUpdater.lockedOwnerName), tostring(HudTextUpdater.lockedOwnerType), datumTxt)
 end
