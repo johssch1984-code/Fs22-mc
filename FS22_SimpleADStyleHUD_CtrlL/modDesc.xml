@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="80">
+  <author>ChatGPT</author>
+  <version>1.0.1.1</version>
+  <title>Simple AD-Style HUD (CTRL+L)</title>
+  <description>AD-style HUD. Toggle with CTRL+L (action event + raw fallback). Overlay drawing. Uses groundReferenceNode for toolpoint reference; distance to ground plane.</description>
+
+  <actions>
+    <action name="TOGGLE_SIMPLE_HUD" category="GENERAL" />
+  </actions>
+
+  <inputBinding>
+    <actionBinding action="TOGGLE_SIMPLE_HUD" axisType="BUTTON" category="GENERAL">
+      <binding device="KB_MOUSE_DEFAULT" input="KEY_l" modifier="KEY_lctrl"/>
+      <binding device="KB_MOUSE_DEFAULT" input="KEY_l" modifier="KEY_rctrl"/>
+    </actionBinding>
+  </inputBinding>
+
+  <l10n filenamePrefix="translations/l10n" />
+
+  <extraSourceFiles>
+    <sourceFile filename="simpleHudAD.lua"/>
+    <sourceFile filename="scripts/HudTextUpdater.lua"/>
+    <sourceFile filename="scripts/DistanceToPlane.lua"/>
+  </extraSourceFiles>
+</modDesc>
