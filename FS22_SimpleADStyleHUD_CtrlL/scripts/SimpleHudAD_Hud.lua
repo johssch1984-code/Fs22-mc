@@ -72,19 +72,67 @@ function SimpleHudAD:onMissionDraw(mission)
 
     self:createOverlays()
 
-    local w, h = getNormalizedScreenValues(640, 480)
+    local w, h = getNormalizedScreenValues(480, 320)
+    self.hudPosX = self.hudPosX
+    self.hudPosY = self.hudPosY
+    self._draggingHud = self._draggingHud or false
+    self._dragOffX = self._dragOffX or 0
+    self._dragOffY = self._dragOffY or 0
     local marginX, marginY = getNormalizedScreenValues(18, 18)
 
     local offX = g_safeFrameOffsetX or 0
     local offY = g_safeFrameOffsetY or 0
 
-    local x = 1 - offX - marginX - w
-    local y = offY + marginY
+    local defaultX = 1 - offX - marginX - w
+    local defaultY = offY + marginY
+
+    if self.hudPosX == nil then
+        self.hudPosX = defaultX
+        self.hudPosY = defaultY
+    end
+
+    local x = self.hudPosX
+    local y = self.hudPosY
 
     -- background + header + line using overlays (AutoDrive-style)
     renderBox(self.bgOv, x, y, w, h, self.colBg)
 
     local _, headerH = getNormalizedScreenValues(0, 32)
+
+    -- drag HUD by clicking header (mouse)
+    if getMouseCursorPosition ~= nil and Input ~= nil and Input.isMouseButtonPressed ~= nil then
+        local mx, my = getMouseCursorPosition()
+        local down = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT)
+        local inHeader = mx >= x and mx <= x + w and my >= (y + h - headerH) and my <= (y + h)
+
+        if down and not self._draggingHud and inHeader then
+            self._draggingHud = true
+            self._dragOffX = mx - x
+            self._dragOffY = my - y
+        elseif not down and self._draggingHud then
+            self._draggingHud = false
+        end
+
+        if self._draggingHud then
+            local newX = mx - self._dragOffX
+            local newY = my - self._dragOffY
+
+            local minX = 0 + offX
+            local maxX = 1 - offX - w
+            local minY = 0 + offY
+            local maxY = 1 - offY - h
+
+            if newX < minX then newX = minX end
+            if newX > maxX then newX = maxX end
+            if newY < minY then newY = minY end
+            if newY > maxY then newY = maxY end
+
+            self.hudPosX = newX
+            self.hudPosY = newY
+            x = newX
+            y = newY
+        end
+    end
     renderBox(self.headerOv, x, y + h - headerH, w, headerH, self.colHeader)
 
     local _, lineH = getNormalizedScreenValues(0, 2)
@@ -167,4 +215,7 @@ function SimpleHudAD:onMissionDraw(mission)
     local footerY = tableY + tableH + padY
     renderTextLine(x + padX, footerY, rowSize, "Input:", self.colMuted, RenderText.ALIGN_LEFT, false)
     renderTextLine(x + w - padX, footerY, rowSize, self.firedOnce and "ActionEvent" or "Raw fallback", self.colText, RenderText.ALIGN_RIGHT, false)
+    local footer2Y = footerY - rowSize - padY
+    renderTextLine(x + padX, footer2Y, rowSize, "Set 0:", self.colMuted, RenderText.ALIGN_LEFT, false)
+    renderTextLine(x + w - padX, footer2Y, rowSize, "CTRL + 0", self.colText, RenderText.ALIGN_RIGHT, false)
 end

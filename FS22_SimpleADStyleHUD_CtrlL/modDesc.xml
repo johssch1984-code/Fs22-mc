@@ -7,12 +7,17 @@
 
   <actions>
     <action name="TOGGLE_SIMPLE_HUD" category="GENERAL" />
+    <action name="SURVEY_SET_ZERO" category="GENERAL" />
   </actions>
 
   <inputBinding>
     <actionBinding action="TOGGLE_SIMPLE_HUD" axisType="BUTTON" category="GENERAL">
       <binding device="KB_MOUSE_DEFAULT" input="KEY_l" modifier="KEY_lctrl"/>
       <binding device="KB_MOUSE_DEFAULT" input="KEY_l" modifier="KEY_rctrl"/>
+    </actionBinding>
+    <actionBinding action="SURVEY_SET_ZERO" axisType="BUTTON" category="GENERAL">
+      <binding device="KB_MOUSE_DEFAULT" input="KEY_0" modifier="KEY_lctrl"/>
+      <binding device="KB_MOUSE_DEFAULT" input="KEY_0" modifier="KEY_rctrl"/>
     </actionBinding>
   </inputBinding>
 
