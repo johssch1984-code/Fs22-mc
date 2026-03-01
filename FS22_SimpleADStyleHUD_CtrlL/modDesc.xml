@@ -3,7 +3,7 @@
   <author>ChatGPT</author>
   <version>1.0.3.2</version>
   <title>Simple AD-Style HUD (CTRL+L)</title>
-  <description>AD-style HUD panel. Toggle with CTRL+L (action event + raw-key fallback). Overlay-based drawing.</description>
+  <description>Survey/Datum HUD. Set 0 via HUD button. Cut/Fill = current toolpoint Y - datumY. Lock only while in vehicle; releases on TAB switch or exit.</description>
 
   <actions>
     <action name="TOGGLE_SIMPLE_HUD" category="GENERAL" />
@@ -25,5 +25,6 @@
 
   <extraSourceFiles>
     <sourceFile filename="simpleHudAD.lua"/>
+    <sourceFile filename="scripts/HudTextUpdater.lua"/>
   </extraSourceFiles>
 </modDesc>
