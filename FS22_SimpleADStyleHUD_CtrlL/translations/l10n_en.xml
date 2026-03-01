@@ -2,5 +2,6 @@
 <l10n>
   <texts>
     <text name="input_TOGGLE_SIMPLE_HUD" text="Toggle Survey HUD" />
-  </texts>
+    <text name="input_SURVEY_SET_ZERO" text="Set 0"/>
+</texts>
 </l10n>
